@@ -1,14 +1,19 @@
 package me.nereo.multi_image_selector;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 多图选择
@@ -35,6 +40,56 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
     private ArrayList<String> resultList = new ArrayList<>();
     private Button mSubmitButton;
     private int mDefaultCount;
+
+    public static Intent makeIntentForNineChoose(Context applicationContext, List<String> alreadySelected) {
+        Intent intent = new Intent(applicationContext, MultiImageSelectorActivity.class);
+        // 是否显示拍摄图片
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+        // 最大可选择图片数量
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
+        // 选择模式
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        // 默认选择
+        if(alreadySelected != null && alreadySelected.size()>0){
+            ArrayList<String> selected = new ArrayList<String>(alreadySelected);
+            intent.putExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, selected);
+        }
+        return intent;
+    }
+
+    public static Intent makeIntentForSingleChoose(Context applicationContext, final String alreadySelected) {
+        Intent intent = new Intent(applicationContext, MultiImageSelectorActivity.class);
+        // 是否显示拍摄图片
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+        // 最大可选择图片数量
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 1);
+        // 选择模式
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
+        // 默认选择
+        if(!TextUtils.isEmpty(alreadySelected)){
+            ArrayList<String> selected = new ArrayList<String>(){{
+                add(alreadySelected);
+            }};
+            intent.putExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, selected);
+        }
+        return intent;
+    }
+
+    public static Intent makeIntentForMultiChoose(Context applicationContext, int maxImageCount, List<String> alreadySelected) {
+        Intent intent = new Intent(applicationContext, MultiImageSelectorActivity.class);
+        // 是否显示拍摄图片
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+        // 最大可选择图片数量
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxImageCount);
+        // 选择模式
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        // 默认选择
+        if(alreadySelected != null && alreadySelected.size()>0){
+            ArrayList<String> selected = new ArrayList<String>(alreadySelected);
+            intent.putExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, selected);
+        }
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
