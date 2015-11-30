@@ -37,9 +37,9 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
     /** 多选 */
     public static final int MODE_MULTI = 1;
 
-    private ArrayList<String> resultList = new ArrayList<>();
-    private Button mSubmitButton;
-    private int mDefaultCount;
+    protected ArrayList<String> resultList = new ArrayList<>();
+    protected Button mSubmitButton;
+    protected int mDefaultCount;
 
     public static Intent makeIntentForNineChoose(Context applicationContext, List<String> alreadySelected) {
         Intent intent = new Intent(applicationContext, MultiImageSelectorActivity.class);
