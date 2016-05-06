@@ -2,6 +2,7 @@ package me.nereo.multi_image_selector;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * 多图选择
  * Created by Nereo on 2015/4/7.
+ * Updated by nereo on 2016/1/19.
  */
 public class MultiImageSelectorActivity extends FragmentActivity implements MultiImageSelectorFragment.Callback{
 
@@ -146,6 +148,11 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         });
     }
 
+    private void updateDoneText(){
+        mSubmitButton.setText(String.format("%s(%d/%d)",
+                getString(R.string.action_done), resultList.size(), mDefaultCount));
+    }
+
     @Override
     public void onSingleImageSelected(String path) {
         Intent data = new Intent();
@@ -177,6 +184,7 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         }else{
             mSubmitButton.setText(getBtnText(resultList.size(), mDefaultCount));
         }
+        updateDoneText();
         // 当为选择图片时候的状态
         if(resultList.size() == 0){
             mSubmitButton.setText(getBtnText(resultList.size(), mDefaultCount));
@@ -187,6 +195,10 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
     @Override
     public void onCameraShot(File imageFile) {
         if(imageFile != null) {
+
+            // notify system
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(imageFile)));
+
             Intent data = new Intent();
             resultList.add(imageFile.getAbsolutePath());
             data.putStringArrayListExtra(EXTRA_RESULT, resultList);
