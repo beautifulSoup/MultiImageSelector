@@ -1,10 +1,9 @@
 package me.nereo.multiimageselector;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
@@ -76,6 +74,8 @@ public class MainActivity extends ActionBarActivity {
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxNum);
                 // 选择模式
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, selectedMode);
+
+                intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_HIDDEN_FILES, false);
                 // 默认选择
                 if(mSelectPath != null && mSelectPath.size()>0){
                     intent.putExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, mSelectPath);

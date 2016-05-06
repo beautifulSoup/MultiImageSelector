@@ -10,8 +10,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +21,10 @@ import java.util.List;
  */
 public class MultiImageSelectorActivity extends FragmentActivity implements MultiImageSelectorFragment.Callback{
 
+    /**
+     * 是否显示隐藏目录下的文件或者隐藏文件，默认不显示
+     */
+    public static final String EXTRA_SHOW_HIDDEN_FILES = "show_hidden_files";
     /** 最大图片选择次数，int类型，默认9 */
     public static final String EXTRA_SELECT_COUNT = "max_select_count";
     /** 图片选择模式，默认多选 */
@@ -43,7 +45,13 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
     private Button mSubmitButton;
     private int mDefaultCount;
 
-    public static Intent makeIntentForNineChoose(Context applicationContext, List<String> alreadySelected) {
+    /**
+     * @param applicationContext
+     * @param alreadySelected
+     * @param showHidden 是否显示隐藏目录下的文件或者隐藏文件     默认不显示
+     * @return
+     */
+    public static Intent makeIntentForNineChoose(Context applicationContext, List<String> alreadySelected, boolean showHidden) {
         Intent intent = new Intent(applicationContext, MultiImageSelectorActivity.class);
         // 是否显示拍摄图片
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
@@ -51,6 +59,7 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
         // 选择模式
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        intent.putExtra(EXTRA_SHOW_HIDDEN_FILES, showHidden);
         // 默认选择
         if(alreadySelected != null && alreadySelected.size()>0){
             ArrayList<String> selected = new ArrayList<String>(alreadySelected);
@@ -59,7 +68,12 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         return intent;
     }
 
-    public static Intent makeIntentForSingleChoose(Context applicationContext, final String alreadySelected) {
+    public static Intent makeIntentForNineChoose(Context applicationContext, List<String> alreadySelected) {
+        return makeIntentForNineChoose(applicationContext, alreadySelected, false);
+    }
+
+
+    public static Intent makeIntentForSingleChoose(Context applicationContext, final String alreadySelected, boolean showHidden) {
         Intent intent = new Intent(applicationContext, MultiImageSelectorActivity.class);
         // 是否显示拍摄图片
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
@@ -67,6 +81,7 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 1);
         // 选择模式
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_SINGLE);
+        intent.putExtra(EXTRA_SHOW_HIDDEN_FILES, showHidden);
         // 默认选择
         if(!TextUtils.isEmpty(alreadySelected)){
             ArrayList<String> selected = new ArrayList<String>(){{
@@ -77,12 +92,17 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         return intent;
     }
 
-    public static Intent makeIntentForMultiChoose(Context applicationContext, int maxImageCount, List<String> alreadySelected) {
+    public static Intent makeIntentForSingleChoose(Context applicationContext, final String alreadySelected) {
+        return makeIntentForSingleChoose(applicationContext, alreadySelected, false);
+    }
+
+    public static Intent makeIntentForMultiChoose(Context applicationContext, int maxImageCount, List<String> alreadySelected, boolean showHidden) {
         Intent intent = new Intent(applicationContext, MultiImageSelectorActivity.class);
         // 是否显示拍摄图片
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
         // 最大可选择图片数量
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxImageCount);
+        intent.putExtra(EXTRA_SHOW_HIDDEN_FILES, showHidden);
         // 选择模式
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
         // 默认选择
@@ -91,6 +111,10 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
             intent.putExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, selected);
         }
         return intent;
+    }
+
+    public static Intent makeIntentForMultiChoose(Context applicationContext, int maxImageCount, List<String> alreadySelected) {
+        return makeIntentForMultiChoose(applicationContext, maxImageCount, alreadySelected, false);
     }
 
     @Override
@@ -106,11 +130,13 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
             resultList = intent.getStringArrayListExtra(EXTRA_DEFAULT_SELECTED_LIST);
         }
 
+        boolean showHidden = intent.getBooleanExtra(EXTRA_SHOW_HIDDEN_FILES, false);
         Bundle bundle = new Bundle();
         bundle.putInt(MultiImageSelectorFragment.EXTRA_SELECT_COUNT, mDefaultCount);
         bundle.putInt(MultiImageSelectorFragment.EXTRA_SELECT_MODE, mode);
         bundle.putBoolean(MultiImageSelectorFragment.EXTRA_SHOW_CAMERA, isShow);
         bundle.putStringArrayList(MultiImageSelectorFragment.EXTRA_DEFAULT_SELECTED_LIST, resultList);
+        bundle.putBoolean(MultiImageSelectorFragment.EXTRA_SHOW_HIDDEN_FILES, showHidden);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.image_grid, Fragment.instantiate(this, MultiImageSelectorFragment.class.getName(), bundle))

@@ -126,4 +126,24 @@ public class FileUtils {
         return perm == PackageManager.PERMISSION_GRANTED;
     }
 
+
+    /**
+     * 判断该文件是否为隐藏文件或者在隐藏文件夹中
+     * @param path
+     * @return 如果路径不符合规范也返回  true
+     */
+    public static boolean isHiddenFile(String path){
+        //只某一个segment是由.打头的就算隐藏的
+        String [] segments = path.split("/");
+        if(segments == null || segments.length == 0){
+            return true;
+        }
+        for(String seg : segments){
+            if(seg.startsWith(".")){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

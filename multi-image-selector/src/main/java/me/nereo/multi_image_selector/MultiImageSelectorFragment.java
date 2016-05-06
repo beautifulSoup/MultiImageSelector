@@ -52,6 +52,8 @@ public class MultiImageSelectorFragment extends Fragment {
 
     private static final String KEY_TEMP_FILE = "key_temp_file";
 
+    public static final String EXTRA_SHOW_HIDDEN_FILES = "show_hidden_files";
+
     /** 最大图片选择次数，int类型 */
     public static final String EXTRA_SELECT_COUNT = "max_select_count";
     /** 图片选择模式，int类型 */
@@ -99,6 +101,8 @@ public class MultiImageSelectorFragment extends Fragment {
 
     private File mTmpFile;
 
+    private boolean mShowHiddenFiles = false;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -123,6 +127,8 @@ public class MultiImageSelectorFragment extends Fragment {
 
         // 图片选择模式
         final int mode = getArguments().getInt(EXTRA_SELECT_MODE);
+
+        mShowHiddenFiles = getArguments().getBoolean(EXTRA_SHOW_HIDDEN_FILES);
 
         // 默认选择
         if(mode == MODE_MULTI) {
@@ -445,6 +451,9 @@ public class MultiImageSelectorFragment extends Fragment {
                         long dateTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
                         Image image = null;
                         if (fileExist(path)) {
+                            if(!mShowHiddenFiles && FileUtils.isHiddenFile(path)){
+                                continue;
+                            }
                             image = new Image(path, name, dateTime);
                             images.add(image);
                         }
@@ -491,6 +500,7 @@ public class MultiImageSelectorFragment extends Fragment {
 
         }
     };
+
 
     private Folder getFolderByPath(String path){
         if(mResultFolder != null){
